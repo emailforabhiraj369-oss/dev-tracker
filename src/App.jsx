@@ -18,10 +18,20 @@ function App() {
   const [statusInput, setStatusInput] = useState("Applied");
   const [applications, setApplications] = useState(() => {
 
+
+
+
+
     const savedApps = localStorage.getItem("dev-tracker-apps");
     console.log('1. Reading from localStorage on load:', savedApps)
     return savedApps ? JSON.parse(savedApps) : [];
   });
+
+  // Day6 filter and delete wrt job.id
+  const deleteJob = (id) => {
+    const updatedApps = applications.filter(job => job.id !== id);
+    setApplications(updatedApps)
+  }
   // Day5 using local storage and useEffect
   useEffect(() => {
     console.log("2. useEffect running.Saving to localStorage:", applications);
@@ -53,15 +63,18 @@ function App() {
 
   return (
     <>
-      <h1>Day 5 :Job Tracker</h1>
+      <h1>Day 6 :Job Tracker</h1>
       {/* Displaying the application list */}
       <ul>
         {applications.map((job) => {
-          const { id, role, company } = job;
-          return <li key={id}>  <strong>{company}</strong> - {role}
-          </li>
+          const { id, role, company, status } = job;
+          return (<li key={id}>  <strong>{company}</strong> - {role} [{status}]
+            <button onClick={() => deleteJob(id)}>Delete Job</button>
+
+          </li>)
         })}
       </ul>
+
 
       {/* custom company input */}
 
@@ -88,8 +101,9 @@ function App() {
       </select>
       <div style={{ padding: '20px' }}>
         <button onClick={addJob}>Add Job</button>
-
-
+        <br />
+        {/* inline button handler Day6 */}
+        {/* <button onClick={()=>deleteJob(id)}>Delete Job</button> */}
 
 
       </div>
