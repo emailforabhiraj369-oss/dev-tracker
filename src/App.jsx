@@ -17,15 +17,11 @@ function App() {
   const [roleInput, setRoleInput] = useState("");
   const [statusInput, setStatusInput] = useState("Applied");
   const [applications, setApplications] = useState(() => {
-
-
-
-
-
     const savedApps = localStorage.getItem("dev-tracker-apps");
     console.log('1. Reading from localStorage on load:', savedApps)
     return savedApps ? JSON.parse(savedApps) : [];
   });
+
 
   // Day6 filter and delete wrt job.id
   const deleteJob = (id) => {
@@ -39,6 +35,23 @@ function App() {
   }, [applications]);
 
 
+
+// state to manage search
+  const [searchQuery,setSearchQuery]=useState("");
+  // state to manage filter
+  const [filterStatus,setFilterStatus]=useState("All");
+
+   // Day7 :Filter engine combining search and status
+    const filteredApplications=applications.filter((job)=>{
+      const matchesSearch=
+      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.role.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // check if status dropwown matches or if"All" is selected
+      const matchesStatus=filterStatus === "All" || job.status === filterStatus;
+
+      return matchesSearch && matchesStatus;
+    });
   function addJob() {
 
     //check to not add empt job or jo roles
@@ -63,19 +76,47 @@ function App() {
 
   return (
     <>
-      <h1>Day 6 :Job Tracker</h1>
+
+    {/* Day7: filter & search input section */}
+
+    <div style={{backgroundColor: '#f4f4f5',padding: '15px',borderRadius:'8px',marginBottom:'20px'}}>
+
+    <h3>Filters & Search</h3>
+    <input type="text"
+    placeholder='Search company or role ...' 
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    style={{padding:'8px', marginRight: '10px', width: '250px'}}
+
+    />
+    <select value={filterStatus}
+    onChange={(e) => setFilterStatus(e.target.value)}
+    style={{padding :'8px'}}
+    >
+      <option value="All">All statuses</option>
+      <option value="Applied">Applied</option>
+      <option value="Interviewing">Interviewing</option>
+      <option value="Offered">Offered</option>
+      <option value="Rejected">Rejected</option>
+    
+
+    </select>
+    </div>
+
+      <h1>Day 7 :Job Tracker</h1>
       {/* Displaying the application list */}
       <ul>
-        {applications.map((job) => {
+        {filteredApplications.map((job) => {
           const { id, role, company, status } = job;
           return (<li key={id}>  <strong>{company}</strong> - {role} [{status}]
             <button onClick={() => deleteJob(id)}>Delete Job</button>
 
           </li>)
         })}
+        {filteredApplications.length ===0 && <p style={{color:'gray'}}>No application match your criteria</p>}
       </ul>
 
-
+<h3>Add New application</h3>
       {/* custom company input */}
 
       <input type="text"
@@ -99,13 +140,10 @@ function App() {
         <option value="Offered">Offered</option>
         <option value="Rejected">Rejected</option>
       </select>
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: '20px 0' }}>
         <button onClick={addJob}>Add Job</button>
         <br />
-        {/* inline button handler Day6 */}
-        {/* <button onClick={()=>deleteJob(id)}>Delete Job</button> */}
-
-
+       
       </div>
     </>
   )
