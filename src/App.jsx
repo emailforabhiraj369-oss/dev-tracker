@@ -11,7 +11,9 @@ import './App.css'
 
 function App() {
 
-
+  // =================================
+// 1. STATE Declarations
+// =================================
 
   const [companyInput, setCompanyInput] = useState("");
   const [roleInput, setRoleInput] = useState("");
@@ -22,25 +24,23 @@ function App() {
     return savedApps ? JSON.parse(savedApps) : [];
   });
 
-
-  // Day6 filter and delete wrt job.id
-  const deleteJob = (id) => {
-    const updatedApps = applications.filter(job => job.id !== id);
-    setApplications(updatedApps)
-  }
-  // Day5 using local storage and useEffect
+  // Day 7 :Search  and filter state grouped with ither states
+  const [searchQuery,setSearchQuery]=useState("");
+  const [filterStatus,setFilterStatus]=useState("All");
+  
+  // =================================
+  // 2.SIDE EFFECTS(USEeFFECT)
+  // =================================
+  // Day 5: Syncing with localStorage
+  
   useEffect(() => {
     console.log("2. useEffect running.Saving to localStorage:", applications);
     localStorage.setItem("dev-tracker-apps", JSON.stringify(applications))
   }, [applications]);
 
-
-
-// state to manage search
-  const [searchQuery,setSearchQuery]=useState("");
-  // state to manage filter
-  const [filterStatus,setFilterStatus]=useState("All");
-
+  // =================================
+  //  3. DERIVED STATE ENGINES
+  // =================================
    // Day7 :Filter engine combining search and status
     const filteredApplications=applications.filter((job)=>{
       const matchesSearch=
@@ -52,6 +52,28 @@ function App() {
 
       return matchesSearch && matchesStatus;
     });
+
+   // Day 8 -Performance metric board CALCULATIONS
+
+    const totalApps =applications.length;
+
+    const totalInterviews = applications.filter(job => job.status === "Interviewing").length;
+    const totalOffers = applications.filter(job => job.status ==="Offered").length;
+
+
+    // to prevent division by zero if there a re no applications yet
+    const conversionRate = totalApps > 0 ?((totalInterviews /totalApps) *100).toFixed(1) : "0.0";
+
+
+
+  
+
+
+  // =================================
+  //4.Event handlers(Action Functions)
+  // =================================
+  // Day 5 & 6
+
   function addJob() {
 
     //check to not add empt job or jo roles
@@ -71,12 +93,44 @@ function App() {
     setStatusInput("Applied");
   }
 
+  // Day6 filter and delete wrt job.id
+  const deleteJob = (id) => {
+    const updatedApps = applications.filter(job => job.id !== id);
+    setApplications(updatedApps)
+  }
 
-
-
+  
+// =================================
+// 5.RENDER RETURN
+// =================================
+  
   return (
     <>
+    
+          <h1>Day 8 :Job Tracker Dashboard</h1>
 
+
+      {/* Day 8: Permormance metrics Dashboard Row */}
+      <div className='metrics-container'>
+        <div className="metric-card">
+          <h4>Total Applications</h4>
+          <p style={{ color : '#3b82f6'}}>{totalApps}</p>
+        </div>
+         <div className="metric-card">
+          <h4>Interviews</h4>
+          <p style={{ color : '#eab308'}}>{totalInterviews}</p>
+        </div>
+         <div className="metric-card">
+          <h4>Offers Received</h4>
+          <p style={{ color : '#22c55e'}}>{totalOffers}</p>
+        </div>
+         <div className="metric-card">
+          <h4>Conversion Rate</h4>
+          <p style={{ color : '#a855f7'}}>{conversionRate}%</p>
+        </div>
+
+
+      </div>
     {/* Day7: filter & search input section */}
 
     <div style={{backgroundColor: '#f4f4f5',padding: '15px',borderRadius:'8px',marginBottom:'20px'}}>
@@ -102,8 +156,6 @@ function App() {
 
     </select>
     </div>
-
-      <h1>Day 7 :Job Tracker</h1>
       {/* Displaying the application list */}
       <ul>
         {filteredApplications.map((job) => {
