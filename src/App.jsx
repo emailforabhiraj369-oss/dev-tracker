@@ -12,12 +12,16 @@ import './App.css'
 function App() {
 
   // =================================
-// 1. STATE Declarations
-// =================================
+  // 1. STATE Declarations
+  // =================================
 
   const [companyInput, setCompanyInput] = useState("");
   const [roleInput, setRoleInput] = useState("");
   const [statusInput, setStatusInput] = useState("Applied");
+
+  // Day 9: State for tracking applications date(default to today's YYYY-MM-DD)
+  const [dateInput, setDateInput] = useState(() => new Date().toISOString().split('T')[0]);
+  // =============================================================================================
   const [applications, setApplications] = useState(() => {
     const savedApps = localStorage.getItem("dev-tracker-apps");
     console.log('1. Reading from localStorage on load:', savedApps)
@@ -25,14 +29,14 @@ function App() {
   });
 
   // Day 7 :Search  and filter state grouped with ither states
-  const [searchQuery,setSearchQuery]=useState("");
-  const [filterStatus,setFilterStatus]=useState("All");
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
+
   // =================================
   // 2.SIDE EFFECTS(USEeFFECT)
   // =================================
   // Day 5: Syncing with localStorage
-  
+
   useEffect(() => {
     console.log("2. useEffect running.Saving to localStorage:", applications);
     localStorage.setItem("dev-tracker-apps", JSON.stringify(applications))
@@ -41,32 +45,32 @@ function App() {
   // =================================
   //  3. DERIVED STATE ENGINES
   // =================================
-   // Day7 :Filter engine combining search and status
-    const filteredApplications=applications.filter((job)=>{
-      const matchesSearch=
+  // Day7 :Filter engine combining search and status
+  const filteredApplications = applications.filter((job) => {
+    const matchesSearch =
       job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.role.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // check if status dropwown matches or if"All" is selected
-      const matchesStatus=filterStatus === "All" || job.status === filterStatus;
+    // check if status dropwown matches or if"All" is selected
+    const matchesStatus = filterStatus === "All" || job.status === filterStatus;
 
-      return matchesSearch && matchesStatus;
-    });
+    return matchesSearch && matchesStatus;
+  });
 
-   // Day 8 -Performance metric board CALCULATIONS
+  // Day 8 -Performance metric board CALCULATIONS
 
-    const totalApps =applications.length;
+  const totalApps = applications.length;
 
-    const totalInterviews = applications.filter(job => job.status === "Interviewing").length;
-    const totalOffers = applications.filter(job => job.status ==="Offered").length;
-
-
-    // to prevent division by zero if there a re no applications yet
-    const conversionRate = totalApps > 0 ?((totalInterviews /totalApps) *100).toFixed(1) : "0.0";
+  const totalInterviews = applications.filter(job => job.status === "Interviewing").length;
+  const totalOffers = applications.filter(job => job.status === "Offered").length;
 
 
+  // to prevent division by zero if there a re no applications yet
+  const conversionRate = totalApps > 0 ? ((totalInterviews / totalApps) * 100).toFixed(1) : "0.0";
 
-  
+
+
+
 
 
   // =================================
@@ -82,7 +86,10 @@ function App() {
       id: Date.now(),
       company: companyInput,
       role: roleInput,
-      status: statusInput
+      status: statusInput,
+
+      // Day 9: Storing the date value
+      date: dateInput
 
     }
     setApplications([...applications, customJob]);
@@ -91,6 +98,9 @@ function App() {
 
     setRoleInput("");
     setStatusInput("Applied");
+
+    // Day9 :Reset input back to today's date
+    setDateInput(new Date().toISOString().split('T')[0]);
   }
 
   // Day6 filter and delete wrt job.id
@@ -99,76 +109,76 @@ function App() {
     setApplications(updatedApps)
   }
 
-  
-// =================================
-// 5.RENDER RETURN
-// =================================
-  
+
+  // =================================
+  // 5.RENDER RETURN
+  // =================================
+
   return (
     <>
-    
-          <h1>Day 8 :Job Tracker Dashboard</h1>
+
+      <h1>Day 9 :Job Tracker Dashboard</h1>
 
 
       {/* Day 8: Permormance metrics Dashboard Row */}
       <div className='metrics-container'>
         <div className="metric-card">
           <h4>Total Applications</h4>
-          <p style={{ color : '#3b82f6'}}>{totalApps}</p>
+          <p style={{ color: '#3b82f6' }}>{totalApps}</p>
         </div>
-         <div className="metric-card">
+        <div className="metric-card">
           <h4>Interviews</h4>
-          <p style={{ color : '#eab308'}}>{totalInterviews}</p>
+          <p style={{ color: '#eab308' }}>{totalInterviews}</p>
         </div>
-         <div className="metric-card">
+        <div className="metric-card">
           <h4>Offers Received</h4>
-          <p style={{ color : '#22c55e'}}>{totalOffers}</p>
+          <p style={{ color: '#22c55e' }}>{totalOffers}</p>
         </div>
-         <div className="metric-card">
+        <div className="metric-card">
           <h4>Conversion Rate</h4>
-          <p style={{ color : '#a855f7'}}>{conversionRate}%</p>
+          <p style={{ color: '#a855f7' }}>{conversionRate}%</p>
         </div>
 
 
       </div>
-    {/* Day7: filter & search input section */}
+      {/* Day7: filter & search input section */}
 
-    <div style={{backgroundColor: '#f4f4f5',padding: '15px',borderRadius:'8px',marginBottom:'20px'}}>
+      <div style={{ backgroundColor: '#f4f4f5', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
 
-    <h3>Filters & Search</h3>
-    <input type="text"
-    placeholder='Search company or role ...' 
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    style={{padding:'8px', marginRight: '10px', width: '250px'}}
+        <h3>Filters & Search</h3>
+        <input type="text"
+          placeholder='Search company or role ...'
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ padding: '8px', marginRight: '10px', width: '250px' }}
 
-    />
-    <select value={filterStatus}
-    onChange={(e) => setFilterStatus(e.target.value)}
-    style={{padding :'8px'}}
-    >
-      <option value="All">All statuses</option>
-      <option value="Applied">Applied</option>
-      <option value="Interviewing">Interviewing</option>
-      <option value="Offered">Offered</option>
-      <option value="Rejected">Rejected</option>
-    
+        />
+        <select value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          style={{ padding: '8px' }}
+        >
+          <option value="All">All statuses</option>
+          <option value="Applied">Applied</option>
+          <option value="Interviewing">Interviewing</option>
+          <option value="Offered">Offered</option>
+          <option value="Rejected">Rejected</option>
 
-    </select>
-    </div>
+
+        </select>
+      </div>
       {/* Displaying the application list */}
       <ul>
         {filteredApplications.map((job) => {
-          const { id, role, company, status } = job;
-          return (<li key={id}>  <strong>{company}</strong> - {role} [{status}]
+          const { id, role, company, status, date } = job;
+          return (<li key={id}>  <strong>{company}</strong> - {role} [{status}] <span style={{ color: '#a1a1aa', fontSize: '14px' }} >(Applied on :{date || "N/A"})</span>
             <button onClick={() => deleteJob(id)}>Delete Job</button>
 
           </li>)
         })}
-        {filteredApplications.length ===0 && <p style={{color:'gray'}}>No application match your criteria</p>}
+        {filteredApplications.length === 0 && <p style={{ color: 'gray' }}>No application match your criteria</p>}
       </ul>
 
-<h3>Add New application</h3>
+      <h3>Add New application</h3>
       {/* custom company input */}
 
       <input type="text"
@@ -184,6 +194,16 @@ function App() {
         value={roleInput}
         onChange={(e) => setRoleInput(e.target.value)} />
       <br />
+
+
+      {/* Day 9 :custom Date Input Field */}
+      <input type="date"
+        placeholder='Enter date'
+        value={dateInput}
+        onChange={(e) => setDateInput(e.target.value)}
+        style={{ padding: '6px', marginBottom: '8px', width: '175px' }} />
+      <br />
+
       <select value={statusInput}
         onChange={(e) => setStatusInput(e.target.value)}
       >
@@ -195,7 +215,7 @@ function App() {
       <div style={{ padding: '20px 0' }}>
         <button onClick={addJob}>Add Job</button>
         <br />
-       
+
       </div>
     </>
   )
