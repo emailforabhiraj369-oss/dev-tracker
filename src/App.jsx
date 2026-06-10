@@ -110,6 +110,21 @@ function App() {
   }
 
 
+
+  // Day 10: Reset Systems with Confirmation Guard
+  const clearAllData = ()=>{
+  const userConfirmed = window.confirm("Are you absolutely sure you want to clear ALL APPLICATIONS ? This action can't be undone. ")
+
+    if(userConfirmed){
+      // Clear React State
+      // useEffect's hooks will auto sync this empty array to local Storage
+     setApplications([]);
+    }
+  }
+
+
+
+
   // =================================
   // 5.RENDER RETURN
   // =================================
@@ -117,7 +132,7 @@ function App() {
   return (
     <>
 
-      <h1>Day 9 :Job Tracker Dashboard</h1>
+      <h1>Day 10 :Job Tracker Dashboard</h1>
 
 
       {/* Day 8: Permormance metrics Dashboard Row */}
@@ -215,6 +230,13 @@ function App() {
       <div style={{ padding: '20px 0' }}>
         <button onClick={addJob}>Add Job</button>
         <br />
+
+        {/* Day 10: Destructive Action Clear Trigger */}
+        {applications.length >0 &&(
+          <button onClick={clearAllData} className="btn-danger">
+            Clear All Data
+          </button>
+        )}
 
       </div>
     </>

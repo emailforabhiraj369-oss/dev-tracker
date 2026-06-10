@@ -24,3 +24,23 @@
   font-size: 24px;
   font-weight: bold;
 }
+
+/* Destructive action button style */
+.btn-danger{
+  margin-top: 15px;
+  background-color: #dc2626;
+  color: white;
+  padding: 8px 2px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+
+}
+
+
+.btn-danger:hover{
+  background-color: #b91c1c;
+  text-transform: capitalize;
+}
