@@ -132,7 +132,7 @@ function App() {
   return (
     <>
 
-      <h1>Day 10 :Job Tracker Dashboard</h1>
+      <h1>Day 11 :Job Tracker Dashboard</h1>
 
 
       {/* Day 8: Permormance metrics Dashboard Row */}
@@ -142,7 +142,7 @@ function App() {
           <p style={{ color: '#3b82f6' }}>{totalApps}</p>
         </div>
         <div className="metric-card">
-          <h4>Interviews</h4>
+          <h4>Interviews </h4>
           <p style={{ color: '#eab308' }}>{totalInterviews}</p>
         </div>
         <div className="metric-card">
@@ -185,7 +185,19 @@ function App() {
       <ul>
         {filteredApplications.map((job) => {
           const { id, role, company, status, date } = job;
-          return (<li key={id}>  <strong>{company}</strong> - {role} [{status}] <span style={{ color: '#a1a1aa', fontSize: '14px' }} >(Applied on :{date || "N/A"})</span>
+
+          // Day11 :Dynamic class map configuration
+          const badgeClasses={
+            Applied:"badge badge-applied",
+            Interviewing:"badge badge-interviewing",
+            Offered:"badge badge-offered",
+            Rejected:"badge badge-rejected"
+          };
+          return (<li key={id}>  <strong>{company}</strong> - {role} {" "} 
+          {/* <span className= {status==="Applied"?"blue" :status ==="Offered" ?"green":"gray"}>{status}</span>{" "}  */}
+          <span className={badgeClasses[status] || "badge"}>{status}</span>{" "}
+          
+          <span style={{ color: '#a1a1aa', fontSize: '14px' }} >(Applied on :{date || "N/A"})</span>
             <button onClick={() => deleteJob(id)}>Delete Job</button>
 
           </li>)

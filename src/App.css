@@ -25,7 +25,7 @@
   font-weight: bold;
 }
 
-/* Destructive action button style */
+/* day 10:Destructive action button style */
 .btn-danger{
   margin-top: 15px;
   background-color: #dc2626;
@@ -43,4 +43,44 @@
 .btn-danger:hover{
   background-color: #b91c1c;
   text-transform: capitalize;
+}
+
+/* Day1: Core Visual Satus badges */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 400;
+  border-radius: 12px;
+  text-transform:  uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 6px;
+
+/* fallback color for "pending" status */
+  background-color: #4b5563;
+  color: #ffffff;
+
+}
+
+/* Contextual Status Colors */
+.badge-applied{
+  background-color: #e0f2fe;
+  color: #0369a1;
+
+}
+
+.badge-interviewing{
+  background-color: #fef9c3;
+  color:#a16207
+
+}
+
+.badge-offered{
+  background-color: #dcfce7;
+  color: #15803d;
+
+}
+.badge-rejected{
+  background-color: #fee2e2;
+  color:#b91c1c;
 }
