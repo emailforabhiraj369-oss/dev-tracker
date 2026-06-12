@@ -19,6 +19,8 @@ function App() {
   const [roleInput, setRoleInput] = useState("");
   const [statusInput, setStatusInput] = useState("Applied");
 
+  // Day 12: Temporary text input tracker for new application remarks
+  const [notesInput, setNotesInput] = useState("");
   // Day 9: State for tracking applications date(default to today's YYYY-MM-DD)
   const [dateInput, setDateInput] = useState(() => new Date().toISOString().split('T')[0]);
   // =============================================================================================
@@ -89,7 +91,9 @@ function App() {
       status: statusInput,
 
       // Day 9: Storing the date value
-      date: dateInput
+      date: dateInput,
+      // Day 12: Injecting the text input context 
+      notes: notesInput
 
     }
     setApplications([...applications, customJob]);
@@ -101,6 +105,8 @@ function App() {
 
     // Day9 :Reset input back to today's date
     setDateInput(new Date().toISOString().split('T')[0]);
+    // Day12: clears text box after submission
+    setNotesInput("");
   }
 
   // Day6 filter and delete wrt job.id
@@ -109,16 +115,22 @@ function App() {
     setApplications(updatedApps)
   }
 
-
+  // Day 12: Inline data mutation updater using map
+  const updateNotes = (id, writtenText) => {
+   const updatedApps= applications.map(job =>
+      job.id === id ? { ...job, notes: writtenText } : job
+    );
+   setApplications(updatedApps)
+  }
 
   // Day 10: Reset Systems with Confirmation Guard
-  const clearAllData = ()=>{
-  const userConfirmed = window.confirm("Are you absolutely sure you want to clear ALL APPLICATIONS ? This action can't be undone. ")
+  const clearAllData = () => {
+    const userConfirmed = window.confirm("Are you absolutely sure you want to clear ALL APPLICATIONS ? This action can't be undone. ")
 
-    if(userConfirmed){
+    if (userConfirmed) {
       // Clear React State
       // useEffect's hooks will auto sync this empty array to local Storage
-     setApplications([]);
+      setApplications([]);
     }
   }
 
@@ -132,7 +144,7 @@ function App() {
   return (
     <>
 
-      <h1>Day 11 :Job Tracker Dashboard</h1>
+      <h1>Day 12 :Job Tracker Dashboard</h1>
 
 
       {/* Day 8: Permormance metrics Dashboard Row */}
@@ -184,20 +196,27 @@ function App() {
       {/* Displaying the application list */}
       <ul>
         {filteredApplications.map((job) => {
-          const { id, role, company, status, date } = job;
+          const { id, role, company, status, date, notes } = job;
 
           // Day11 :Dynamic class map configuration
-          const badgeClasses={
-            Applied:"badge badge-applied",
-            Interviewing:"badge badge-interviewing",
-            Offered:"badge badge-offered",
-            Rejected:"badge badge-rejected"
+          const badgeClasses = {
+            Applied: "badge badge-applied",
+            Interviewing: "badge badge-interviewing",
+            Offered: "badge badge-offered",
+            Rejected: "badge badge-rejected"
           };
-          return (<li key={id}>  <strong>{company}</strong> - {role} {" "} 
-          {/* <span className= {status==="Applied"?"blue" :status ==="Offered" ?"green":"gray"}>{status}</span>{" "}  */}
-          <span className={badgeClasses[status] || "badge"}>{status}</span>{" "}
-          
-          <span style={{ color: '#a1a1aa', fontSize: '14px' }} >(Applied on :{date || "N/A"})</span>
+          return (<li key={id}>  <strong>{company}</strong> - {role} {" "}
+            {/* <span className= {status==="Applied"?"blue" :status ==="Offered" ?"green":"gray"}>{status}</span>{" "}  */}
+            <span className={badgeClasses[status] || "badge"}>{status}</span>{" "}
+            <span style={{ color: '#a1a1aa', fontSize: '14px' }} >(Applied on :{date || "N/A"})</span>
+
+            {/* Day 12: Inline Notes input Element Box */}
+            <input type="text"
+            placeholder='Add interview notes, links or remarks...'
+            value={notes || ""}
+            onChange={(e)=>updateNotes(id,e.target.value)}
+            style={{marginLeft: "10px", padding:"4px 8px",width:"220px",fontSize : "12px",borderRadius:"4px",border:"1px solid #ccc"}}
+            />
             <button onClick={() => deleteJob(id)}>Delete Job</button>
 
           </li>)
@@ -239,12 +258,24 @@ function App() {
         <option value="Offered">Offered</option>
         <option value="Rejected">Rejected</option>
       </select>
+
+
+
+      {/* Day 12:Notes creation input markup field */}
+      <input type="text"
+      
+      placeholder='Enter notes/remarks,referral contact info'
+      value={notesInput}
+      onChange={(e)=>setNotesInput(e.target.value)}
+      style={{width: '280px',padding:'6px',marginBottom:'8px',display:"block"}}
+      
+      />
       <div style={{ padding: '20px 0' }}>
         <button onClick={addJob}>Add Job</button>
         <br />
 
         {/* Day 10: Destructive Action Clear Trigger */}
-        {applications.length >0 &&(
+        {applications.length > 0 && (
           <button onClick={clearAllData} className="btn-danger">
             Clear All Data
           </button>
