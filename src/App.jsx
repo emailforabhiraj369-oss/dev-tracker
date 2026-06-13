@@ -34,6 +34,9 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
 
+  // Day 13: Sort actively
+  const [sortBy,setSortBy]= useState("Latest");
+
   // =================================
   // 2.SIDE EFFECTS(USEeFFECT)
   // =================================
@@ -57,7 +60,22 @@ function App() {
     const matchesStatus = filterStatus === "All" || job.status === filterStatus;
 
     return matchesSearch && matchesStatus;
-  });
+  })
+  // Day 13: Sorting engine
+  .sort((a,b)=>{
+  
+    if(sortBy === "Alphabetical") {
+      // Sorts alphabetically by comparing (A to Z)
+      return(a.company || "").localeCompare(b.company || "");
+    }
+
+    if(sortBy === "Latest") {
+      // Sorts chronologically by date string ,newest first(YYYY-MM-DD STRINGS COMAPARE)
+      return (b.date || "").localeCompare(a.date || "");
+    }
+
+    return 0;
+  })
 
   // Day 8 -Performance metric board CALCULATIONS
 
@@ -144,7 +162,7 @@ function App() {
   return (
     <>
 
-      <h1>Day 12 :Job Tracker Dashboard</h1>
+      <h1>Day 13 :Job Tracker Dashboard</h1>
 
 
       {/* Day 8: Permormance metrics Dashboard Row */}
@@ -182,7 +200,7 @@ function App() {
         />
         <select value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          style={{ padding: '8px' }}
+          style={{ padding: '8px',marginRight:'10px' }}
         >
           <option value="All">All statuses</option>
           <option value="Applied">Applied</option>
@@ -192,6 +210,17 @@ function App() {
 
 
         </select>
+{/* Day 13:Sorting Dropdown */}
+
+        <select value={sortBy}
+        onChange={(e)=> setSortBy(e.target.value)}
+        style={{ padding: "8px"}}
+        >
+          <option value="Latest">Latest Applied</option>
+          <option value="Alphabetical">Company (A-Z)</option>
+        </select>
+
+
       </div>
       {/* Displaying the application list */}
       <ul>
@@ -206,7 +235,7 @@ function App() {
             Rejected: "badge badge-rejected"
           };
           return (<li key={id}>  <strong>{company}</strong> - {role} {" "}
-            {/* <span className= {status==="Applied"?"blue" :status ==="Offered" ?"green":"gray"}>{status}</span>{" "}  */}
+           
             <span className={badgeClasses[status] || "badge"}>{status}</span>{" "}
             <span style={{ color: '#a1a1aa', fontSize: '14px' }} >(Applied on :{date || "N/A"})</span>
 
